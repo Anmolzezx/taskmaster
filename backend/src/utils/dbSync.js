@@ -1,5 +1,7 @@
 const { sequelize } = require('../config/database');
 const User = require('./User');
+const Project = require('./Project');
+const ProjectMember = require('./ProjectMember');
 
 /**
  * Sync database models
