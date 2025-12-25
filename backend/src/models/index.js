@@ -3,6 +3,7 @@ const User = require('./User');
 const Project = require('./Project');
 const ProjectMember = require('./ProjectMember');
 const Task = require('./Task');
+const Comment = require('./Comment');
 
 // Define model associations
 
@@ -41,11 +42,20 @@ Task.belongsTo(User, { foreignKey: 'assigneeId', as: 'assignee' });
 User.hasMany(Task, { foreignKey: 'createdBy', as: 'createdTasks' });
 Task.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
 
+// Task <-> Comment (One-to-Many)
+Task.hasMany(Comment, { foreignKey: 'taskId', as: 'comments' });
+Comment.belongsTo(Task, { foreignKey: 'taskId', as: 'task' });
+
+// User <-> Comment (One-to-Many)
+User.hasMany(Comment, { foreignKey: 'userId', as: 'comments' });
+Comment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+
 const models = {
     User,
     Project,
     ProjectMember,
     Task,
+    Comment,
     sequelize
 };
 
