@@ -24,9 +24,11 @@ app.use(express.urlencoded({ extended: true }));
 // API Routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const projectRoutes = require('./routes/projectRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/projects', projectRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
