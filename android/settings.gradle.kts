@@ -23,4 +23,5 @@ rootProject.name = "TaskMaster"
 include(":app")
 include(":core:common")
 include(":core:network")
+include(":core:database")
  
