@@ -29,6 +29,16 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING(500),
         allowNull: true,
         field: 'avatar_url'
+    },
+    resetToken: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        field: 'reset_token'
+    },
+    resetTokenExpiry: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'reset_token_expiry'
     }
 }, {
     tableName: 'users',
