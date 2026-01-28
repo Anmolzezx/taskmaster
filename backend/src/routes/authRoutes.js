@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const passwordResetController = require('../controllers/passwordResetController');
 
 /**
  * @route   POST /api/auth/register
@@ -29,5 +30,26 @@ router.post('/refresh', authController.refresh);
  * @access  Private
  */
 router.post('/logout', authController.logout);
+
+/**
+ * @route   POST /api/auth/forgot-password
+ * @desc    Request password reset
+ * @access  Public
+ */
+router.post('/forgot-password', passwordResetController.requestReset);
+
+/**
+ * @route   GET /api/auth/verify-reset-token
+ * @desc    Verify password reset token
+ * @access  Public
+ */
+router.get('/verify-reset-token', passwordResetController.verifyToken);
+
+/**
+ * @route   POST /api/auth/reset-password
+ * @desc    Reset password with token
+ * @access  Public
+ */
+router.post('/reset-password', passwordResetController.resetPassword);
 
 module.exports = router;
