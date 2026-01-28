@@ -1,13 +1,25 @@
 const { User } = require('../models');
 const { ApiResponse } = require('../utils/ApiResponse');
 const bcrypt = require('bcryptjs');
+const Joi = require('joi');
+
+// Validation schemas
+const updateProfileSchema = Joi.object({
+    fullName: Joi.string().min(2).max(255).optional(),
+    avatarUrl: Joi.string().uri().max(500).optional()
+});
+
+const updatePasswordSchema = Joi.object({
+    currentPassword: Joi.string().required(),
+    newPassword: Joi.string().min(6).required()
+});
 
 /**
  * Get current user profile
  */
 const getProfile = async (req, res, next) => {
     try {
-        const user = await User.findByPk(req.user.id, {
+        const user = await User.findByPk(req.user.userId, {
             attributes: { exclude: ['passwordHash', 'resetToken', 'resetTokenExpiry'] }
         });
 
@@ -28,8 +40,16 @@ const getProfile = async (req, res, next) => {
  */
 const updateProfile = async (req, res, next) => {
     try {
-        const { fullName, avatarUrl } = req.body;
-        const userId = req.user.id;
+        // Validate input
+        const { error, value } = updateProfileSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json(
+                ApiResponse.error(error.details[0].message, 400)
+            );
+        }
+
+        const { fullName, avatarUrl } = value;
+        const userId = req.user.userId;
 
         const user = await User.findByPk(userId);
         if (!user) {
@@ -60,21 +80,16 @@ const updateProfile = async (req, res, next) => {
  */
 const updatePassword = async (req, res, next) => {
     try {
-        const { currentPassword, newPassword } = req.body;
-        const userId = req.user.id;
-
-        // Validation
-        if (!currentPassword || !newPassword) {
+        // Validate input
+        const { error, value } = updatePasswordSchema.validate(req.body);
+        if (error) {
             return res.status(400).json(
-                ApiResponse.error('Current password and new password are required', 400)
+                ApiResponse.error(error.details[0].message, 400)
             );
         }
 
-        if (newPassword.length < 6) {
-            return res.status(400).json(
-                ApiResponse.error('New password must be at least 6 characters', 400)
-            );
-        }
+        const { currentPassword, newPassword } = value;
+        const userId = req.user.userId;
 
         const user = await User.findByPk(userId);
         if (!user) {
