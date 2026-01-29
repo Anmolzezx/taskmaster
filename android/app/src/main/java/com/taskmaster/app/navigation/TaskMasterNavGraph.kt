@@ -6,8 +6,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.taskmaster.app.ui.auth.AuthViewModel
 import com.taskmaster.app.ui.auth.LoginScreen
 import com.taskmaster.app.ui.auth.RegisterScreen
@@ -21,10 +23,6 @@ fun TaskMasterNavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(Screen.Splash.route) {
-            // SplashScreen()
-        }
-        
         composable(Screen.Login.route) {
             val viewModel: AuthViewModel = hiltViewModel()
             val authState by viewModel.authState.collectAsState()
@@ -44,9 +42,7 @@ fun TaskMasterNavGraph(
                 onRegisterClick = {
                     navController.navigate(Screen.Register.route)
                 },
-                onForgotPasswordClick = {
-                    // TODO: Navigate to forgot password screen
-                },
+                onForgotPasswordClick = {},
                 isLoading = authState.isLoading,
                 errorMessage = authState.errorMessage
             )
@@ -90,26 +86,51 @@ fun TaskMasterNavGraph(
         }
         
         composable(Screen.ProjectList.route) {
-            // ProjectListScreen(navController)
+            val viewModel: com.taskmaster.app.ui.project.ProjectViewModel = hiltViewModel()
+            val projectState by viewModel.projectState.collectAsState()
+            
+            com.taskmaster.app.ui.project.ProjectListScreen(
+                projectState = projectState,
+                onProjectClick = { projectId ->
+                    navController.navigate(Screen.ProjectDetail.createRoute(projectId))
+                },
+                onCreateProject = { name, description ->
+                    viewModel.createProject(name, description)
+                },
+                onDeleteProject = { projectId ->
+                    viewModel.deleteProject(projectId)
+                },
+                onLogoutClick = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
         }
         
-        composable(Screen.ProjectDetail.route) { backStackEntry ->
-            val projectId = backStackEntry.arguments?.getString("projectId")
-            // ProjectDetailScreen(navController, projectId)
-        }
-        
-        composable(Screen.TaskBoard.route) { backStackEntry ->
-            val projectId = backStackEntry.arguments?.getString("projectId")
-            // TaskBoardScreen(navController, projectId)
-        }
-        
-        composable(Screen.TaskDetail.route) { backStackEntry ->
-            val taskId = backStackEntry.arguments?.getString("taskId")
-            // TaskDetailScreen(navController, taskId)
-        }
-        
-        composable(Screen.Profile.route) {
-            // ProfileScreen(navController)
+        composable(
+            route = Screen.ProjectDetail.route,
+            arguments = listOf(navArgument("projectId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val projectId = backStackEntry.arguments?.getString("projectId") ?: return@composable
+            val viewModel: com.taskmaster.app.ui.task.TaskViewModel = hiltViewModel()
+            val taskState by viewModel.taskState.collectAsState()
+            
+            com.taskmaster.app.ui.task.TaskListScreen(
+                projectId = projectId,
+                projectName = "Project Tasks",
+                taskState = taskState,
+                onBackClick = { navController.popBackStack() },
+                onCreateTask = { title, description, status, priority ->
+                    viewModel.createTask(title, description, status, priority)
+                },
+                onUpdateTaskStatus = { taskId, newStatus ->
+                    viewModel.updateTaskStatus(taskId, newStatus)
+                },
+                onDeleteTask = { taskId ->
+                    viewModel.deleteTask(taskId)
+                }
+            )
         }
     }
 }
