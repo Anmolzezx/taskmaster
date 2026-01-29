@@ -27,12 +27,14 @@ const userRoutes = require('./routes/userRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const attachmentRoutes = require('./routes/attachmentRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api', taskRoutes); // Task routes include both /projects/:id/tasks and /tasks/:id
 app.use('/api', commentRoutes); // Comment routes include /tasks/:id/comments and /comments/:id
+app.use('/api', attachmentRoutes); // Attachment routes include /tasks/:id/attachments and /attachments/:id
 
 // Health check endpoint
 app.get('/health', (req, res) => {
