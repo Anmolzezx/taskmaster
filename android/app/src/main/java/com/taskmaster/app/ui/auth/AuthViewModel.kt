@@ -111,12 +111,15 @@ class AuthViewModel @Inject constructor(
     }
 
     fun logout() {
-        _authState.update {
-            AuthState(
-                isLoading = false,
-                isAuthenticated = false,
-                errorMessage = null
-            )
+        viewModelScope.launch {
+            tokenManager.clearTokens()
+            _authState.update {
+                AuthState(
+                    isLoading = false,
+                    isAuthenticated = false,
+                    errorMessage = null
+                )
+            }
         }
     }
 }
