@@ -70,4 +70,10 @@ object NetworkModule {
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideProjectApi(retrofit: Retrofit): com.taskmaster.core.network.api.ProjectApi {
+        return retrofit.create(com.taskmaster.core.network.api.ProjectApi::class.java)
+    }
 }
