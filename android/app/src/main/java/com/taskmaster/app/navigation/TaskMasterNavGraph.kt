@@ -78,6 +78,9 @@ fun TaskMasterNavGraph(
         
         composable(Screen.Home.route) {
             com.taskmaster.app.ui.home.HomeScreen(
+                onProjectsClick = {
+                    navController.navigate(Screen.ProjectList.route)
+                },
                 onLogoutClick = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }

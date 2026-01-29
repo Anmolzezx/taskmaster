@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HomeScreen(
+    onProjectsClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -40,18 +41,21 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             Text(
-                text = "Authentication successful",
+                text = "Manage your projects and tasks efficiently",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             
             Spacer(modifier = Modifier.height(32.dp))
             
-            Text(
-                text = "Project and task management features coming soon...",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Button(
+                onClick = onProjectsClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                Text("View Projects")
+            }
         }
     }
 }
