@@ -2,6 +2,7 @@ package com.taskmaster.core.network.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.taskmaster.core.common.Constants
+import com.taskmaster.core.network.api.AuthApi
 import com.taskmaster.core.network.interceptor.AuthInterceptor
 import dagger.Module
 import dagger.Provides
@@ -62,5 +63,11 @@ object NetworkModule {
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthApi(retrofit: Retrofit): AuthApi {
+        return retrofit.create(AuthApi::class.java)
     }
 }
