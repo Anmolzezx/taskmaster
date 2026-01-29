@@ -2,6 +2,8 @@ package com.taskmaster.app.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.taskmaster.core.data.local.TokenManager
+import com.taskmaster.core.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    // TODO: Inject AuthRepository when data layer is ready
+    private val authRepository: AuthRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow(AuthState())
@@ -22,38 +25,39 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _authState.update { it.copy(isLoading = true, errorMessage = null) }
             
-            try {
-                // TODO: Call repository login method
-                // For now, simulate API call
-                kotlinx.coroutines.delay(1500)
-                
-                // Validate input
-                if (email.isBlank() || password.isBlank()) {
+            if (email.isBlank() || password.isBlank()) {
+                _authState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Email and password are required"
+                    )
+                }
+                return@launch
+            }
+            
+            authRepository.login(email, password)
+                .onSuccess { response ->
+                    tokenManager.saveTokens(
+                        accessToken = response.data.accessToken,
+                        refreshToken = response.data.refreshToken,
+                        userId = response.data.user.id
+                    )
                     _authState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = "Email and password are required"
+                            isAuthenticated = true,
+                            errorMessage = null
                         )
                     }
-                    return@launch
                 }
-                
-                // Simulate successful login
-                _authState.update {
-                    it.copy(
-                        isLoading = false,
-                        isAuthenticated = true,
-                        errorMessage = null
-                    )
+                .onFailure { error ->
+                    _authState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.message ?: "Login failed"
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                _authState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = e.message ?: "Login failed"
-                    )
-                }
-            }
         }
     }
 
@@ -61,48 +65,49 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _authState.update { it.copy(isLoading = true, errorMessage = null) }
             
-            try {
-                // TODO: Call repository register method
-                // For now, simulate API call
-                kotlinx.coroutines.delay(1500)
-                
-                // Validate input
-                if (email.isBlank() || password.isBlank() || fullName.isBlank()) {
-                    _authState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = "All fields are required"
-                        )
-                    }
-                    return@launch
-                }
-                
-                if (password.length < 6) {
-                    _authState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = "Password must be at least 6 characters"
-                        )
-                    }
-                    return@launch
-                }
-                
-                // Simulate successful registration
+            if (email.isBlank() || password.isBlank() || fullName.isBlank()) {
                 _authState.update {
                     it.copy(
                         isLoading = false,
-                        isAuthenticated = true,
-                        errorMessage = null
+                        errorMessage = "All fields are required"
                     )
                 }
-            } catch (e: Exception) {
-                _authState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = e.message ?: "Registration failed"
-                    )
-                }
+                return@launch
             }
+            
+            if (password.length < 6) {
+                _authState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Password must be at least 6 characters"
+                    )
+                }
+                return@launch
+            }
+            
+            authRepository.register(email, password, fullName)
+                .onSuccess { response ->
+                    tokenManager.saveTokens(
+                        accessToken = response.data.accessToken,
+                        refreshToken = response.data.refreshToken,
+                        userId = response.data.user.id
+                    )
+                    _authState.update {
+                        it.copy(
+                            isLoading = false,
+                            isAuthenticated = true,
+                            errorMessage = null
+                        )
+                    }
+                }
+                .onFailure { error ->
+                    _authState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.message ?: "Registration failed"
+                        )
+                    }
+                }
         }
     }
 
