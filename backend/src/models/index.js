@@ -4,6 +4,7 @@ const Project = require('./Project');
 const ProjectMember = require('./ProjectMember');
 const Task = require('./Task');
 const Comment = require('./Comment');
+const Attachment = require('./Attachment');
 
 // Define model associations
 
@@ -50,12 +51,21 @@ Comment.belongsTo(Task, { foreignKey: 'taskId', as: 'task' });
 User.hasMany(Comment, { foreignKey: 'userId', as: 'comments' });
 Comment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+// Task <-> Attachment (One-to-Many)
+Task.hasMany(Attachment, { foreignKey: 'taskId', as: 'attachments' });
+Attachment.belongsTo(Task, { foreignKey: 'taskId', as: 'task' });
+
+// User <-> Attachment (One-to-Many)
+User.hasMany(Attachment, { foreignKey: 'uploadedBy', as: 'uploadedAttachments' });
+Attachment.belongsTo(User, { foreignKey: 'uploadedBy', as: 'uploader' });
+
 const models = {
     User,
     Project,
     ProjectMember,
     Task,
     Comment,
+    Attachment,
     sequelize
 };
 
