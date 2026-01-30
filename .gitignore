@@ -8,17 +8,21 @@ backend/build/
 backend/coverage/
 backend/*.log
 
-# Android
+# Android - Build outputs
 android/.gradle/
 android/.idea/
 android/local.properties
 android/build/
-android/*/build/
+android/**/build/
 android/.DS_Store
 android/captures/
 android/*.apk
 android/*.aab
 android/app/release/
+android/.cxx/
+android/*.iml
+android/.externalNativeBuild/
+android/.navigation/
 
 # IDE
 .vscode/
