@@ -56,9 +56,7 @@ const Attachment = sequelize.define('Attachment', {
 }, {
     tableName: 'attachments',
     timestamps: true,
-    underscored: true,
-    createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    underscored: true
 });
 
 module.exports = Attachment;
