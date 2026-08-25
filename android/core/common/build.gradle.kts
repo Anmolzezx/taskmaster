@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.taskmaster.core.common"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
