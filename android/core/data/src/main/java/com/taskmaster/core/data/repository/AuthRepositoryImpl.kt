@@ -17,6 +17,7 @@ import com.taskmaster.core.network.model.RefreshTokenRequest
 import com.taskmaster.core.network.model.RegisterRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,8 +38,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(email: String, password: String): Result<User> {
         return try {
             val response = authApiService.login(LoginRequest(email, password))
-            if (response.success && response.data != null) {
-                val authData = response.data
+            val authData = response.data
+            if (response.success && authData != null) {
                 saveTokens(authData.accessToken, authData.refreshToken)
                 saveUserId(authData.user.id)
                 userDao.insertUser(authData.user.toEntity())
@@ -60,8 +61,8 @@ class AuthRepositoryImpl @Inject constructor(
             val response = authApiService.register(
                 RegisterRequest(email, password, fullName)
             )
-            if (response.success && response.data != null) {
-                val authData = response.data
+            val authData = response.data
+            if (response.success && authData != null) {
                 saveTokens(authData.accessToken, authData.refreshToken)
                 saveUserId(authData.user.id)
                 userDao.insertUser(authData.user.toEntity())
@@ -105,9 +106,10 @@ class AuthRepositoryImpl @Inject constructor(
                 val response = authApiService.refreshToken(
                     RefreshTokenRequest(refreshToken)
                 )
-                if (response.success && response.data != null) {
-                    saveAccessToken(response.data.accessToken)
-                    Result.Success(response.data.accessToken)
+                val tokenData = response.data
+                if (response.success && tokenData != null) {
+                    saveAccessToken(tokenData.accessToken)
+                    Result.Success(tokenData.accessToken)
                 } else {
                     Result.Error(Exception(response.message))
                 }
@@ -147,8 +149,7 @@ class AuthRepositoryImpl @Inject constructor(
     private suspend fun getRefreshToken(): String? {
         return context.dataStore.data.map { preferences ->
             preferences[refreshTokenKey]
-        }.map { it }
-            .map { null } // Simplified
+        }.first()
     }
 
     private suspend fun clearTokens() {
