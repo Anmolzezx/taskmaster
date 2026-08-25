@@ -146,10 +146,11 @@ fun TaskCard(
                 }
             }
 
-            if (!task.description.isNullOrBlank()) {
+            val description = task.description
+            if (!description.isNullOrBlank()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = task.description,
+                    text = description,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 3,

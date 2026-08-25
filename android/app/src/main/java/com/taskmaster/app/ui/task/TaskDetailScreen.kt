@@ -114,7 +114,8 @@ private fun TaskDetailContent(
         )
 
         // Description
-        if (!task.description.isNullOrBlank()) {
+        val description = task.description
+        if (!description.isNullOrBlank()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -129,7 +130,7 @@ private fun TaskDetailContent(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = task.description,
+                        text = description,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -214,12 +215,8 @@ private fun TaskDetailContent(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 DetailRow("Project ID", task.projectId)
-                if (task.assigneeId != null) {
-                    DetailRow("Assignee ID", task.assigneeId)
-                }
-                if (task.dueDate != null) {
-                    DetailRow("Due Date", task.dueDate)
-                }
+                task.assigneeId?.let { DetailRow("Assignee ID", it) }
+                task.dueDate?.let { DetailRow("Due Date", it) }
                 DetailRow("Created", task.createdAt)
                 DetailRow("Updated", task.updatedAt)
             }

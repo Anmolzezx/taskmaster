@@ -141,10 +141,11 @@ fun ProjectCard(
                     text = project.name,
                     style = MaterialTheme.typography.titleMedium
                 )
-                if (!project.description.isNullOrBlank()) {
+                val description = project.description
+                if (!description.isNullOrBlank()) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = project.description,
+                        text = description,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 2,
