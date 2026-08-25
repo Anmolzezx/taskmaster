@@ -2,7 +2,12 @@ package com.taskmaster.core.common
 
 object Constants {
     // API Configuration
-    const val BASE_URL = "https://taskmaster-api-092n.onrender.com/api/"
+    // Local backend. 10.0.2.2 is the Android emulator's alias for the host's localhost.
+    // Physical device: replace with your Mac's LAN IP, e.g. "http://192.168.1.x:5000/api/".
+    const val BASE_URL = "http://10.0.2.2:5000/api/"
+
+    // Deployed backend (Render):
+    // const val BASE_URL = "https://taskmaster-api-092n.onrender.com/api/"
     
     // Network
     const val CONNECT_TIMEOUT = 30L
