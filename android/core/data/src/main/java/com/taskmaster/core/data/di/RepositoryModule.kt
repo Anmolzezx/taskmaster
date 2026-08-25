@@ -1,7 +1,9 @@
 package com.taskmaster.core.data.di
 
+import com.taskmaster.core.data.local.TokenManager
 import com.taskmaster.core.data.repository.AuthRepositoryImpl
 import com.taskmaster.core.domain.repository.AuthRepository
+import com.taskmaster.core.network.auth.TokenProvider
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,4 +19,10 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTokenProvider(
+        tokenManager: TokenManager
+    ): TokenProvider
 }
