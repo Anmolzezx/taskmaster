@@ -1,6 +1,5 @@
 package com.taskmaster.core.network.di
 
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.taskmaster.core.common.Constants
 import com.taskmaster.core.network.api.AuthApi
 import com.taskmaster.core.network.interceptor.AuthInterceptor
@@ -13,6 +12,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
